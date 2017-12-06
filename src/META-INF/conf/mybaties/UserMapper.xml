@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离 
+注意：使用mapper代理方法开发，namespace有特殊重要的作用，namespace等于mapper接口地址
+-->
+<mapper namespace="com.tongfu.user.mapper.UserMapper">
+	<resultMap id="userResultMap" type="User">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="age" column="age" />
+		<result property="sex" column="sex" />
+	</resultMap>
+	<select id="getUser" parameterType="user" resultMap="userResultMap">
+        SELECT id,name,age,sex FROM user 
+        <where>
+            id=#{id}
+        </where> 
+    </select>
+	
+	<!-- 
+    <select id="getUser" parameterType="user" resultType="com.tongfu.user.entity.User">
+        SELECT user.* FROM user 
+        <where>
+            id=#{id}
+        </where> 
+    </select>
+     -->
+     
+    <select id="getUserList" parameterType="com.tongfu.user.entity.User" resultType="com.tongfu.user.entity.User">
+        SELECT * FROM USER WHERE name LIKE CONCAT(CONCAT("%",#{name}),"%")
+    </select>
+    
+    <insert id="saveUser" parameterType="com.tongfu.user.entity.User">
+        <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+            SELECT uuid()
+        </selectKey>
+        insert into user(id,name,sex,age) value(#{id},#{name},#{sex},#{age})
+    </insert>
+    
+     <!-- 
+    <insert id="saveUser" parameterType="com.tongfu.user.entity.User"  useGeneratedKeys="true"  keyProperty="id">
+        insert into user(id,name,sex,age) value(#{id},#{name},#{sex},#{age})
+    </insert>
+     -->
+    <delete id="deleteUser" parameterType="user">
+        delete from user where id=#{id}
+    </delete>
+    
+    <update id="updateUser" parameterType="com.tongfu.user.entity.User">
+        update  user set name=#{name},sex=#{sex},age=#{age} 
+        where id=#{id}
+    </update>
+	
+	
+</mapper>
+
+
